@@ -1,0 +1,50 @@
+# Node modules
+node_modules/
+client/node_modules/
+server/node_modules/
+server/uploads/
+
+# Environment variables
+.env
+server/.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDEs / editors
+.vscode/
+.idea/
+*.sw?
+
+# Build output
+client/build/
+client/dist/
+server/build/
+server/dist/
+
+# Coverage reports
+coverage/
+client/coverage/
+server/coverage/
+
+# Dependency directories
+bower_components/
+
+# Misc
+*.local
+.env.local
+.env.*.local
+
+# Optional npm cache
+.npm/
+
+# Mac system file
+.Spotlight-V100
+.Trashes
