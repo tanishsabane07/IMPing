@@ -9,6 +9,8 @@ import axios from "axios";
 const SignupPage = () => {
   const [formData, setFormData] = useState({
     regId: "",
+    name: "",
+    email: "",
     password: "",
     password2: "",
   });
@@ -55,6 +57,28 @@ const SignupPage = () => {
                 name="regId"
                 placeholder="eg. C2K230000"
                 value={formData.regId}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label>Name</Label>
+              <Input
+                type="text"
+                name="name"
+                placeholder="Name Surname"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label>Email</Label>
+              <Input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
                 onChange={handleChange}
                 required
               />

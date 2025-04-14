@@ -10,6 +10,8 @@ import Layout from './layouts/layout'
 import EditInternship from './pages/edit_internship'
 import Profile from './pages/profile_settings'
 import ApplyInternship from './pages/upload_details'
+import DuedInternships from './pages/dued_internships'
+import StudentsPage from './pages/student_list'
 
 function App() {
 
@@ -36,6 +38,10 @@ function App() {
         <Route path="/profile/" element={<Profile />} />
 
         <Route path="/student/apply/:id" element={<ApplyInternship />} />
+
+        <Route path="/admin/dued-internships" element={<DuedInternships />} />
+
+        <Route path="/admin/students" element={<StudentsPage />} />
 
         </Routes>
       </Layout>

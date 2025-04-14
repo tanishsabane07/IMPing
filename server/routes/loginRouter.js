@@ -6,11 +6,11 @@ const router = express.Router();
 
 router.post("/signup", async (req, res) => {
     console.log("Received Signup Request:", req.body);
-    const { regId, password, password2 } = req.body;
+    const { regId, name, email, password, password2 } = req.body;
     let role = "student";
     let dept = "";
 
-    if(!regId || !password || !password2)
+    if(!regId || !name || !email || !password || !password2)
     {
         return res.status(400).json({message: "Please enter all fields"});
     }
@@ -45,13 +45,17 @@ router.post("/signup", async (req, res) => {
     try
     {
         const hashedPassword = await bcrypt.hash(password, 10);
-        await UserModel.create({
+        const new_user = await UserModel.create({
             regId: regId,
+            name: name,
+            email: email,
             password: hashedPassword,
             role: role,
             dept: dept
         });
         res.status(201).json({ message: "User registered successfully" });
+        const token = jwt.sign({ id: new_user.id, role: role}, process.env.JWT_SECRET, { expiresIn: 900 });
+        res.json({ token: token });
     }
     catch(err)
     {
@@ -95,7 +99,7 @@ router.post("/login", async (req, res) => {    //login route
             return res.status(400).json({message: "Invalid Credentials"});
         }
 
-        const token = jwt.sign({ id: new_user.id, role: role}, process.env.JWT_SECRET, { expiresIn: 3600 });
+        const token = jwt.sign({ id: new_user.id, role: role}, process.env.JWT_SECRET, { expiresIn: 900 });
         res.json({ token: token });
         
     }

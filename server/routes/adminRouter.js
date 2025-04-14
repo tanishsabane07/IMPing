@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require("../middlewares/auth");
 const upload = require("../middlewares/upload");
 const InternshipModel = require("../models/internships");
+const UserModel = require("../models/users");
 
 router.post("/add-internship", auth, upload.single("image"), async (req, res) => {
   try {
@@ -58,6 +59,27 @@ router.delete("/delete-internship/:id", auth, async (req, res) => {
       console.error("Error deleting internship:", error);
       res.status(500).json({ message: "Error deleting internship", error });
     }
+});
+
+router.get("/students", auth, async (req, res) => {
+  try {
+    const students = await UserModel.find({ role: "student" });
+    res.status(200).json(students);
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).json({ message: "Error fetching students", error });
+  }
+});
+
+router.delete("/students/:id", auth, async (req, res) => {
+  const { id } = req.params;
+  try {
+    await UserModel.findByIdAndDelete(id);
+    res.status(200).json({ message: "Student deleted successfully!" });
+  } catch (error) {
+    console.error("Error deleting student:", error);
+    res.status(500).json({ message: "Error deleting student", error });
+  }
 });
 
 

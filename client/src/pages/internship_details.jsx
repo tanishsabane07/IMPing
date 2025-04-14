@@ -1,19 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { 
-  MapPin, 
-  Clock, 
-  DollarSign, 
-  Calendar, 
-  GraduationCap, 
-  ArrowLeft, 
-  Bookmark, 
-  CheckCircle 
-} from 'lucide-react';
+import { MapPin, Clock, DollarSign, Calendar, GraduationCap, ArrowLeft, Bookmark, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -30,6 +20,7 @@ const InternshipDetails = () => {
 
 
   useEffect(() => {
+    
     const fetchInternship = async () => {
       try {
         const response = await axios.get(`http://localhost:3000/internships/internship/${id}`, {

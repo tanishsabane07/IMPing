@@ -150,8 +150,9 @@ import {
   BookOpen, 
   Search, 
   Bell, 
-  Star, 
-  Filter 
+  Users, 
+  Filter,
+  CalendarX2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -224,11 +225,17 @@ const Navbar = () => {
       roles: ["student"]
     },
     {
-      label: "Manage Internships",
-      icon: <Briefcase className="mr-2 h-4 w-4" />,
-      onClick: () => navigate("/admin/internships"),
+      label: "Manage Students",
+      icon: <Users className="mr-2 h-4 w-4" />,
+      onClick: () => navigate("/admin/students"),
       roles: ["admin"]
     },
+    {
+      label: "Dued Internships",
+      icon: <CalendarX2 className="mr-2 h-4 w-4" />,
+      onClick: () => navigate("/admin/dued-internships"),
+      roles: ["admin"]
+    }
   ];
 
   return (
