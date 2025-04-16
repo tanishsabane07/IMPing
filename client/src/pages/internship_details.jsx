@@ -1,31 +1,56 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MapPin, Clock, DollarSign, Calendar, GraduationCap, ArrowLeft, Bookmark, CheckCircle } from 'lucide-react';
+import { MapPin, Clock, DollarSign, Calendar, GraduationCap, ArrowLeft, Bookmark, CheckCircle, ClipboardCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Toaster } from '@/components/ui/sonner';
+import { useDropzone } from 'react-dropzone';
+import { jwtDecode } from 'jwt-decode';
+import { Badge } from '@/components/ui/badge';
 
 const InternshipDetails = () => {
-  const { id } = useParams();
+  const { id } = useParams();     //get internship id
   const navigate = useNavigate();
-  const [internship, setInternship] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [internship, setInternship] = useState(null);   //state to store internship details
+  const [loading, setLoading] = useState(true);       //loading state
+  const [error, setError] = useState(null);      //error state
+  const [showForm, setShowForm] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
   const [fullName, setFullName] = useState("");
-  const [cgpa, setCgpa] = useState(0.0);
+  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [cgpa, setCgpa] = useState("");
   const [resume, setResume] = useState(null);
+  const [role, setRole] = useState("");
+  const [status, setStatus] = useState("");
+
 
 
   useEffect(() => {
-    
+    const token = localStorage.getItem("authToken");
+    if(token) {
+      try {
+        const decoded = jwtDecode(token);
+        setRole(decoded.role);
+      } catch (error) {
+        console.error("Invalid token", error);
+        localStorage.removeItem("authToken");
+        navigate("/register/login");
+        return;
+      }
+    }
+    else {
+      console.error("No token found");
+      navigate("/register/login");
+      return;
+    }
     const fetchInternship = async () => {
       try {
         const response = await axios.get(`http://localhost:3000/internships/internship/${id}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setInternship(response.data);
@@ -36,9 +61,38 @@ const InternshipDetails = () => {
         setLoading(false);
       }
     };
+    const checkIfApplied = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/applications/applied/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setIsApplied(response.data.applied);
+        setStatus(response.data.status);
+        setShowForm(false);
+      }
+      catch (err) {
+        console.error("Error checking application status:", err);
+      }
+    };
 
     fetchInternship();
-  }, [id]);
+    checkIfApplied();
+  }, [id, navigate]);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: {
+      'application/pdf': ['.pdf'],
+    },
+    maxFiles: 1,
+    onDrop: (acceptedFiles) => {
+      if (acceptedFiles.length > 0) {
+        setResume(acceptedFiles[0]);
+      }
+    },
+  });
+  
 
   const handleSave = () => {
     // Implement save functionality
@@ -48,6 +102,59 @@ const InternshipDetails = () => {
       status: "success"
     });
   };
+
+  const handleApply = async () => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      Toaster({
+        title: "Authentication Error",
+        description: "Please log in to apply for the internship.",
+        status: "error"
+      });
+      return;
+    }
+
+    if (!fullName || !email || !mobile || !cgpa || !resume) {
+      Toaster({
+        title: "Missing Information",
+        description: "Please fill in all fields and upload your resume.",
+        status: "error"
+      });
+      return;
+    }
+    
+  
+    const formData = new FormData();
+    formData.append("fullName", fullName.trim());
+    formData.append("email", email.trim());
+    formData.append("mobile", mobile.trim());
+    formData.append("cgpa", cgpa);
+    formData.append("resume", resume);
+    formData.append("internshipId", id);
+  
+    try {
+      const res = await axios.post(`http://localhost:3000/applications/apply/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (res.status === 201) {
+        setIsApplied(true);
+        setShowForm(false); // Optional: close the form
+      }
+    } catch (err) {
+      console.error("Application failed:", err);
+      const message = err.response?.data?.message || "There was an error submitting your application.";
+      Toaster({
+        title: "Application Failed",
+        description: message,
+        status: "error"
+      });
+    }
+  };
+  
 
   if (loading) return (
     <div className="flex justify-center items-center min-h-screen">
@@ -100,6 +207,9 @@ const InternshipDetails = () => {
         <div>
           <h1 className="text-2xl font-bold m-3">{internship.company}</h1>
         </div>
+        {isApplied && (
+          <Badge className="bg-lime-500" variant="outline">{status}</Badge>
+        )}
       </div>
 
       <Separator className="my-6" />
@@ -156,80 +266,114 @@ const InternshipDetails = () => {
 
       {/* Application section at the bottom */}
       <div className="mb-8">
-        {isApplied ? (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center">
-            <CheckCircle className="h-6 w-6 text-green-600 mr-3" />
-            <div>
-              <p className="font-medium text-green-800">Your application has been submitted</p>
-              <p className="text-sm text-green-700">We'll notify you when there's an update</p>
+      {isApplied ? (
+        <Button  className="w-full h-12 text-l bg-lime-500 hover:bg-lime-500 text-black text-xl font-semibold cursor-not-allowed border border-emerald-600 shadow-lg"><ClipboardCheck size={1}/>Applied
+</Button>
+
+        ) : showForm ? (
+          <Card className="p-4">
+            <div className="flex flex-col md:flex-row gap-8">
+              {/* Left Side - Fields */}
+              <div className="flex-1 space-y-4">
+                <div>
+                  <label className="block mb-1 font-medium text-sm text-gray-700">Full Name</label>
+                  <input
+                    type="text"
+                    className="w-full border rounded px-3 py-2"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-medium text-sm text-gray-700">Email</label>
+                  <input
+                    type="email"
+                    className="w-full border rounded px-3 py-2"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-medium text-sm text-gray-700">Mobile Number</label>
+                  <input
+                    type="tel"
+                    className="w-full border rounded px-3 py-2"
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    pattern="[0-9]{10}"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-medium text-sm text-gray-700">CGPA</label>
+                  <input
+                    type="number"
+                    className="w-full border rounded px-3 py-2"
+                    value={cgpa}
+                    onChange={(e) => setCgpa(e.target.value)}
+                    step="0.01"
+                  />
+                </div>
+              </div>
+
+              {/* Right Side - Resume Upload */}
+              <div className="flex-1">
+                <label className="block mb-1 font-medium text-sm text-gray-700">Upload Resume (PDF only)</label>
+                <div
+                  {...getRootProps()}
+                  className={`border-2 rounded-md transition-colors duration-200 px-4 py-10 text-center cursor-pointer ${
+                    isDragActive
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                  }`}
+                >
+                  <input {...getInputProps()} />
+                  {isDragActive ? (
+                    <p className="text-blue-600 font-medium">Drop your resume here...</p>
+                  ) : resume ? (
+                    <div className="text-green-700 font-medium">
+                      <CheckCircle className="inline-block w-5 h-5 mr-2" />
+                      {resume.name}
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-gray-600">
+                        Drag & drop your resume here, or <span className="text-blue-600 underline">click to browse</span>
+                      </p>
+                      <p className="text-sm text-gray-400 mt-2">Only PDF files are accepted</p>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        ) : (
-          <Card className="p-4 space-y-4">
-            <div>
-              <label className="block mb-1 font-medium">Full Name</label>
-              <input
-                type="text"
-                className="w-full border rounded px-3 py-2"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-              />
+
+            {/* Submit Button */}
+            <div className="mt-6">
+              <Button
+                disabled={!fullName || !email || !mobile || !cgpa || !resume}
+                onClick={handleApply}
+                className="w-full h-12 text-lg"
+              >
+                Submit Application
+              </Button>
             </div>
-
-            <div>
-              <label className="block mb-1 font-medium">CGPA</label>
-              <input
-                type="number"
-                className="w-full border rounded px-3 py-2"
-                value={cgpa}
-                onChange={(e) => setCgpa(e.target.value)}
-                step="0.01"
-              />
-            </div>
-
-            <div>
-              <label className="block mb-1 font-medium">Upload Resume (PDF)</label>
-              <input
-                type="file"
-                accept="application/pdf"
-                onChange={(e) => setResume(e.target.files[0])}
-                className="w-full"
-              />
-            </div>
-
-            <Button
-              disabled={!fullName || !cgpa || !resume}
-              onClick={async () => {
-                const token = localStorage.getItem('authToken');
-                const formData = new FormData();
-                formData.append("fullName", fullName);
-                formData.append("cgpa", cgpa);
-                formData.append("resume", resume);
-                formData.append("internshipId", id);
-
-                try {
-                  const res = await axios.post(`http://localhost:3000/student/apply`, formData, {
-                    headers: {
-                      "Content-Type": "multipart/form-data",
-                      Authorization: `Bearer ${token}`,
-                    },
-                  });
-
-                  setIsApplied(true);
-                } catch (err) {
-                  console.error("Application failed:", err);
-                  alert("Error: " + (err.response?.data?.message || "Application failed"));
-                }
-              }}
-              className="w-full h-12 text-lg"
-            >
-              Apply Now
-            </Button>
           </Card>
+        ) : (
+          <Button
+            onClick={() => setShowForm(true)}
+            className="w-full h-12 text-lg"
+          >
+            Apply Now
+          </Button>
         )}
+
       </div>
     </div>
   );
 };
 
 export default InternshipDetails;
+
+

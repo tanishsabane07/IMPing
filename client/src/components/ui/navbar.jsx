@@ -221,7 +221,7 @@ const Navbar = () => {
     {
       label: "My Applications",
       icon: <FileText className="mr-2 h-4 w-4" />,
-      onClick: () => navigate("/student/applications"),
+      onClick: () => navigate("/student/my-applications"),
       roles: ["student"]
     },
     {

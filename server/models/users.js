@@ -10,6 +10,8 @@ const User = new Schema({
     email: {type: String, unique: true},
     password: {type: String, required: true}, 
     role: { type: String, enum: ['student', 'admin'], required: true },
+    isInterning: {type: Boolean, default: false},
+    internships: [{type: ObjectId, ref: "internships"}],
 });
 
 const UserModel = mongoose.model("users", User);

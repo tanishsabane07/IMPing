@@ -12,6 +12,7 @@ import Profile from './pages/profile_settings'
 import ApplyInternship from './pages/upload_details'
 import DuedInternships from './pages/dued_internships'
 import StudentsPage from './pages/student_list'
+import StudentApplications from './pages/student_applications'
 
 function App() {
 
@@ -42,6 +43,8 @@ function App() {
         <Route path="/admin/dued-internships" element={<DuedInternships />} />
 
         <Route path="/admin/students" element={<StudentsPage />} />
+
+        <Route path="/student/my-applications" element={<StudentApplications />} />
 
         </Routes>
       </Layout>
