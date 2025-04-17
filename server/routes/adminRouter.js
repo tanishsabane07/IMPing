@@ -81,6 +81,4 @@ router.delete("/students/:id", auth, async (req, res) => {
     res.status(500).json({ message: "Error deleting student", error });
   }
 });
-
-
 module.exports = router;
