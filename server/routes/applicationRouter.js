@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const express = require("express");
 const auth = require("../middlewares/auth");
 const router = express.Router();
@@ -61,6 +62,36 @@ router.post("/apply/:id", auth, upload.single("resume"), async (req, res) => {
       console.error("Error submitting application:", err);
       res.status(500).json({ message: "Server Error" });
     }
+});
+
+router.get("/internship/:id", auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // 1. Validate the ID format first
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid internship ID format" });
+    }
+
+    // 2. Add pagination/sorting if needed (for many applications)
+    const applications = await ApplicationModel.find({ internshipId: id })
+      .populate({
+        path: "studentId",
+        select: "name email mobile resume" // Only select necessary fields
+      })
+      .sort({ createdAt: -1 }); // Newest first
+
+    // 3. Check if applications array is empty (not applications itself)
+    if (applications.length === 0) {
+      return res.status(404).json({ message: "No applications found for this internship" });
+    }
+
+    res.status(200).json(applications);
+    
+  } catch (err) {
+    console.error("Error fetching applications:", err);
+    res.status(500).json({ message: "Server error while fetching applications" });
+  }
 });
 
 module.exports = router;

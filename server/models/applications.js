@@ -11,7 +11,7 @@ const Application = new mongoose.Schema({
   },
   studentId: {
     type: ObjectId,
-    ref: "User",
+    ref: "users",
     required: true,
   },
   name: {
