@@ -4,22 +4,10 @@ const auth = require("../middlewares/auth");
 const ApplicationModel = require("../models/applications");
 const router = express.Router();
 
-
-router.post("/apply/:id_int", auth, (req, res) => {
-    const { id_int, id_stu } = req.params;
-    const { fullName, cgpa, resume } = req.body;
-
-    if (!fullName || !cgpa || !resume) {
-        return res.status(400).json({ message: "Please fill all fields" });
-    }
-
-    const user = UserModel.findById(req.user);
-    if(!user)
-    {
-        return res.status(404).json({ message: "User not found" });
-    }
-    
-})
+// This route is now handled by applicationRouter.js, so we can remove it
+// router.post("/apply/:id_int", auth, (req, res) => {
+//     // This route was incomplete and causing path-to-regexp errors
+// });
 
 router.patch("/profile", auth, async (req, res) => {   //profile route
     try
