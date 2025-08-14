@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "axios";
+import { apiConfig, API_ENDPOINTS } from "../config/api";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -30,7 +31,7 @@ const SignupPage = () => {
     console.log("Form Data Before API Call:", formData);
 
     try {
-      const response = await axios.post("http://localhost:3000/register/signup", formData);
+      const response = await axios.post(`${apiConfig.baseURL}${API_ENDPOINTS.register}/signup`, formData);
       
       console.log("Signup Successful:", response.data);
       navigate("/internships"); // Redirect to dashboard after signup
