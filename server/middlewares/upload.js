@@ -1,33 +1,55 @@
 const multer = require("multer");
-const path = require("path");
-const {fileURLToPath} = require("url");
+const { imageStorage, resumeStorage } = require("../config/cloudinary");
 
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, "../uploads"));
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
-    }
-});
-
-const fileFilter = (req, file, cb) => {
-    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
-    if (allowedTypes.includes(file.mimetype)) {
-        cb(null, true);
-    } else {
-        cb(new Error("Invalid file type. Only PDF, JPEG, and PNG are allowed."));
-    }
-};
-
-const upload = multer({
-    storage: storage,
+// Upload middleware for images (company logos)
+const uploadImage = multer({
+    storage: imageStorage,
     limits: {
-        fileSize: 5 * 1024 * 1024 // 5MB limit
+        fileSize: 5 * 1024 * 1024, // 5MB limit
     },
-    fileFilter: fileFilter
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error("Only image files (JPEG, PNG, GIF, WebP) are allowed"), false);
+        }
+    }
 });
 
-module.exports = upload;
+// Upload middleware for resumes (PDFs)
+const uploadResume = multer({
+    storage: resumeStorage,
+    limits: {
+        fileSize: 10 * 1024 * 1024, // 10MB limit for PDFs
+    },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === "application/pdf") {
+            cb(null, true);
+        } else {
+            cb(new Error("Only PDF files are allowed for resumes"), false);
+        }
+    }
+});
+
+// Generic upload for mixed files (backward compatibility)
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 10 * 1024 * 1024, // 10MB limit
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/gif", "image/webp"];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error("Invalid file type"), false);
+        }
+    }
+});
+
+module.exports = {
+    upload,
+    uploadImage,
+    uploadResume
+};

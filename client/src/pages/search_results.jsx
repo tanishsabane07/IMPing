@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import { API_ENDPOINTS } from '../config/api';
 import InternshipCard from "./internship_card"; // Assuming you have an InternshipCard component
 
 const SearchResults = () => {
@@ -17,7 +18,7 @@ const SearchResults = () => {
     
     const fetchResults = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/internships/search?query=${searchQuery}`, {
+        const response = await axios.get(API_ENDPOINTS.searchInternships(searchQuery), {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("authToken")}`,
             },
