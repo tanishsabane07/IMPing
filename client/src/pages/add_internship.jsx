@@ -410,7 +410,7 @@ export default function AddInternship() {
               <FormItem>
                 <FormLabel>Skills Required</FormLabel>
                 <FormControl>
-                  <Textarea {...field} placeholder="E.g., B.Tech, MBA" />
+                  <Textarea {...field} />
                 </FormControl>
               </FormItem>
             )}

@@ -128,6 +128,10 @@ const Profile = () => {
                 <span>{user.regId}</span>
               </div>
               <div className="flex justify-between border-b pb-2">
+                <span className="font-medium">Name:</span>
+                <span>{user.name}</span>
+              </div>
+              <div className="flex justify-between border-b pb-2">
                 <span className="font-medium">Department:</span>
                 <span>{user.dept}</span>
               </div>
@@ -135,6 +139,7 @@ const Profile = () => {
                 <span className="font-medium">Email:</span>
                 <span>{user.email}</span>
               </div>
+
             </div>
           )}
 

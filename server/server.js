@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const connectDB = require("./config/db");
 const auth = require("./middlewares/auth");
 const {adminRouter, loginRouter, studentRouter, internshipRouter, profileRouter, applicationRouter } = require("./routes/export_routes");
@@ -24,7 +25,16 @@ app.use("/internships", internshipRouter);
 app.use("/profile", profileRouter);  // profile router
 app.use("/applications", applicationRouter); // application router
 
+// Serve React build files in production
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/dist')));
+    
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
+    });
+}
 
-app.listen(process.env.PORT, () => {    //server listening
-    console.log(`Server is running on port ${process.env.PORT}`);
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {    //server listening
+    console.log(`Server is running on port ${PORT}`);
 });
