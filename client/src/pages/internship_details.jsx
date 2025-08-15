@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -59,8 +58,12 @@ const InternshipDetails = () => {
       console.error("Invalid token", error);
       localStorage.removeItem("authToken");
       navigate("/register/login");
-      return;
     }
+  }, [navigate]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!role) return; // Don't run if we don't have a role yet
 
     const fetchData = async () => {
       try {
@@ -87,20 +90,12 @@ const InternshipDetails = () => {
           setStatus(appliedRes.data.status);
         }
       } catch (err) {
-        setError("Failed to load data");
+        setError("Failed to load data. Please try again.");
         console.error("Error:", err);
       } finally {
         setLoading(false);
       }
     };
-
-    const handleSelectApplicant = (applicationId) => {
-      setSelectedApplicants((prev) => 
-        prev.includes(applicationId) 
-          ? prev.filter((id) => id !== applicationId) 
-          : [...prev, applicationId]
-      );
-    }
 
     fetchData();
   }, [id, navigate, role]);
