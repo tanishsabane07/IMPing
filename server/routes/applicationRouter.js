@@ -3,7 +3,7 @@ const express = require("express");
 const auth = require("../middlewares/auth");
 const router = express.Router();
 const ApplicationModel = require("../models/applications");
-const { uploadResume } = require("../middlewares/upload");
+const upload = require("../middlewares/upload");
 const UserModel = require("../models/users");
 
 // GET /applied/:id
@@ -33,7 +33,7 @@ router.get("/applied/:id", auth, async (req, res) => {
   }
 });
 
-router.post("/apply/:id", auth, uploadResume.single("resume"), async (req, res) => {
+router.post("/apply/:id", auth, upload.single("resume"), async (req, res) => {
     try {
       const { id } = req.params;
       const studentId = req.user;
@@ -45,7 +45,7 @@ router.post("/apply/:id", auth, uploadResume.single("resume"), async (req, res) 
         email: req.body.email,
         mobile: req.body.mobile,
         cgpa: req.body.cgpa,
-        resume: req.file?.path || "", // Cloudinary URL
+        resume: req.file?.path || "", // <== this is where resume gets saved
       };
   
       const newApplication = new ApplicationModel(applicationData);

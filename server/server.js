@@ -7,16 +7,10 @@ const {adminRouter, loginRouter, studentRouter, internshipRouter, profileRouter,
 require("dotenv").config();
 
 const app = express();
-
-// CORS configuration for Vercel frontend
-app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? [process.env.FRONTEND_URL || 'https://your-vercel-app.vercel.app'] 
-        : ['http://localhost:5173', 'http://localhost:3000'],
-    credentials: true
-}));
-
 app.use(express.json());
+app.use(cors());
+app.use("/uploads", express.static("uploads"));
+
 
 connectDB();    //connect to the database
  
