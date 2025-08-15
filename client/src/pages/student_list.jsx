@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
+import { getApiUrl } from '@/config/api';
 import {
   Table,
   TableHeader,
@@ -29,7 +30,7 @@ const StudentsPage = () => {
   const fetchStudents = useCallback(async () => {
     const token = localStorage.getItem("authToken");
     try {
-      const response = await axios.get("http://localhost:3000/admin/students", {
+      const response = await axios.get(getApiUrl("/admin/students"), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -45,7 +46,7 @@ const StudentsPage = () => {
   const handleDelete = async () => {
     const token = localStorage.getItem("authToken");
     try {
-      await axios.delete(`http://localhost:3000/admin/students/${selectedStudentId}`, {
+      await axios.delete(getApiUrl(`/admin/students/${selectedStudentId}`), {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -1,61 +1,7 @@
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-
-// const Profile = () => {
-//     const [user, setUser] = useState(null);
-//     const [error, setError] = useState(null);
-//     const [loading, setLoading] = useState(true);
-
-//     useEffect(() => {
-//         const fetchUserData = async () => {
-//             const token = localStorage.getItem('authToken');
-//             if (!token) {
-//                 setError('Unauthorized: Please log in');
-//                 setLoading(false);
-//                 return;
-//             }
-
-//             try {
-//                 const response = await axios.get("http://localhost:3000/profile", {
-//                     headers: { Authorization: `Bearer ${token}` }
-//                 });
-//                 setUser(response.data);
-//                 setError(null);
-//             } catch (err) {
-//                 setError('Failed to load user profile. Please try again later.');
-//                 console.error(err);
-//             } finally {
-//                 setLoading(false);
-//             }
-//         };
-
-//         fetchUserData();
-//     }, []);
-
-//     return (
-//         <div className='mt-12'>
-//             <h1 className="text-2xl font-bold">Profile Settings</h1>
-
-//             {loading && <p>Loading profile...</p>}
-
-//             {error && <p className="text-red-500">{error}</p>}
-
-//             {user && !loading && (
-//                 <div className="mt-4">
-//                     <p><strong>Registration ID:</strong> {user.regId}</p>
-//                     <p><strong>Name:</strong> {user.name}</p>
-//                     <p><strong>Department:</strong> {user.dept}</p>
-//                     <p><strong>Email:</strong> {user.email}</p>
-//                 </div>
-//             )}
-//         </div>
-//     );
-// };
-
-// export default Profile;
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { getApiUrl } from '@/config/api';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -78,7 +24,7 @@ const Profile = () => {
       }
 
       try {
-        const response = await axios.get("http://localhost:3000/profile", {
+        const response = await axios.get(getApiUrl("/profile"), {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(response.data);

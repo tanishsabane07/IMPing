@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { getApiUrl } from '@/config/api';
 import {Button} from '@/components/ui/button';
 import {Card} from '@/components/ui/card';
 import {Label} from '@/components/ui/label';
@@ -37,7 +38,7 @@ const ApplyInternship = () => {
       data.append(key, formData[key]);
     }
     try {
-      await axios.post(`http://localhost:3000/student/apply/${id}`, data, {
+      await axios.post(getApiUrl(`/student/apply/${id}`), data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'multipart/form-data',

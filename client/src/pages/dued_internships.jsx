@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import InternshipCard from '@/components/ui/internship_card';
 import { useNavigate } from 'react-router-dom';
+import { getApiUrl } from '../config/api';
 
 const DuedInternships = () => {
   const [internships, setInternships] = useState([]);
@@ -20,7 +21,7 @@ const DuedInternships = () => {
     }
 
     try {
-      const response = await axios.get("http://localhost:3000/internships", {
+      const response = await axios.get(getApiUrl("/internships"), {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { AlertTriangle, Save, ArrowLeft } from 'lucide-react';
+import { getApiUrl } from '../config/api';
 
 // UI Components
 import {
@@ -79,7 +80,7 @@ const EditInternship = () => {
       if (!isAdmin) return;
       
       try {
-        const response = await axios.get(`http://localhost:3000/internships/internship/${id}`, {
+        const response = await axios.get(getApiUrl(`/internships/internship/${id}`), {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           }
@@ -185,7 +186,7 @@ const EditInternship = () => {
     }
     
     try {
-      await axios.put(`http://localhost:3000/admin/update-internship/${id}`, submissionData, {
+      await axios.put(getApiUrl(`/admin/update-internship/${id}`), submissionData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("authToken")}`
