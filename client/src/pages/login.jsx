@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff } from 'lucide-react';
 import axios from "axios";
-import { apiConfig, API_ENDPOINTS } from "../config/api";
 
 const LoginPage = () => {
   const [regId, setRegId] = useState('');
@@ -23,7 +22,7 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const response = await axios.post(`${apiConfig.baseURL}${API_ENDPOINTS.register}/login`, {
+      const response = await axios.post("http://localhost:3000/register/login", {
         regId,
         password,
       });
