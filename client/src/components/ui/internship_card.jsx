@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { MoreVertical, AlertTriangle, XCircle } from 'lucide-react';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import { getApiUrl } from '@/config/api';
 
 import {
   DropdownMenu,
@@ -65,7 +66,7 @@ const InternshipCard = ({ _id, company, stipend, deadline, image, location, dura
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await axios.delete(`http://localhost:3000/admin/delete-internship/${_id}`, {
+      await axios.delete(getApiUrl(`/admin/delete-internship/${_id}`), {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
@@ -97,7 +98,7 @@ const InternshipCard = ({ _id, company, stipend, deadline, image, location, dura
         <CardHeader className="pb-2 flex justify-between items-start">
           <div className="flex items-center space-x-4">
             <img
-              src={image ? `http://localhost:3000${image}` : '/google_logo.png'}
+              src={image || '/google_logo.png'}
               alt={`${company} Logo`}
               className="w-20 h-20 object-contain rounded-lg"
             />
