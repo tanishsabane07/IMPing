@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../middlewares/auth");
-const upload = require("../middlewares/upload");
+const { uploadImage } = require("../config/cloudinary");
 const InternshipModel = require("../models/internships");
 const UserModel = require("../models/users");
 
-router.post("/add-internship", auth, upload.single("image"), async (req, res) => {
+router.post("/add-internship", auth, uploadImage.single("image"), async (req, res) => {
   try {
-    const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+    const imagePath = req.file ? req.file.path : null;
 
     const internshipData = {
       company: req.body.company,
@@ -29,12 +29,12 @@ router.post("/add-internship", auth, upload.single("image"), async (req, res) =>
 });
 
 
-router.put("/update-internship/:id", auth, upload.single("image"), async (req, res) => {
+router.put("/update-internship/:id", auth, uploadImage.single("image"), async (req, res) => {
   const { id } = req.params;
   try {
     let updatedData = req.body;
     if (req.file) {
-      updatedData.image = `/uploads/${req.file.filename}`; // Update image if new one is uploaded
+      updatedData.image = req.file.path; // Update image if new one is uploaded
     }
 
     const internship = await InternshipModel.findByIdAndUpdate(id, updatedData, { new: true });

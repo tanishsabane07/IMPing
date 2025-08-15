@@ -1,7 +1,6 @@
 const express = require("express");
 const InternshipModel = require("../models/internships"); // Adjust based on your model path
 const auth = require("../middlewares/auth");
-const upload = require("../middlewares/upload");
 const router = express.Router();
 
 // Search API - Filter internships by title or description

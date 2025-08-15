@@ -3,8 +3,8 @@ const express = require("express");
 const auth = require("../middlewares/auth");
 const router = express.Router();
 const ApplicationModel = require("../models/applications");
-const upload = require("../middlewares/upload");
 const UserModel = require("../models/users");
+const { uploadResume } = require("../config/cloudinary");
 
 // GET /applied/:id
 router.get("/applied/:id", auth, async (req, res) => {
@@ -33,7 +33,7 @@ router.get("/applied/:id", auth, async (req, res) => {
   }
 });
 
-router.post("/apply/:id", auth, upload.single("resume"), async (req, res) => {
+router.post("/apply/:id", auth, uploadResume.single("resume"), async (req, res) => {
     try {
       const { id } = req.params;
       const studentId = req.user;
