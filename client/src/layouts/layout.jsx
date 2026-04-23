@@ -4,7 +4,7 @@ import Navbar from "../components/ui/navbar";
 
 const Layout = ({ children }) => {
   const location = useLocation();
-  const hideNavbarRoutes = ["/register/login", "/register/signup"];
+  const hideNavbarRoutes = ["/", "/register/login", "/register/signup"];
 
   return (
     <div>

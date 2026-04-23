@@ -146,20 +146,18 @@ import {
   User, 
   Settings, 
   FileText, 
-  Briefcase, 
-  BookOpen, 
   Search, 
-  Bell, 
   Users, 
   Filter,
-  CalendarX2
+  CalendarX2,
+  Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from '@/components/ui/navigation-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import './navbar.css';
 
 import {
   DropdownMenu,
@@ -176,7 +174,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Separator } from '@radix-ui/react-dropdown-menu';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -239,14 +236,21 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-[100] flex items-center justify-between px-6 py-3 border-b shadow-sm bg-white">
-      <div className="flex items-center space-x-4">
+    <nav className="app-nav-shell">
+      <div className="app-nav-noise" aria-hidden="true" />
+      <div className="app-nav-inner">
+        <div className="app-nav-left">
+          <button className="brand-pill" onClick={() => navigate("/internships")}>
+            <Sparkles size={14} />
+            IMPing
+          </button>
+
         {/* Logo */}
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Button variant="ghost" size="icon" onClick={() => navigate("/internships")}>
+                <Button variant="ghost" size="icon" onClick={() => navigate("/internships")} className="home-btn">
                   <Home className="h-6 w-6" />
                 </Button>
               </div>
@@ -258,37 +262,43 @@ const Navbar = () => {
         </TooltipProvider>
 
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="flex items-center space-x-2">
-          <div className="relative">
+        <form onSubmit={handleSearch} className="nav-search-form">
+          <div className="nav-search-wrap">
             <Input 
               type="text" 
-              placeholder="Search internships, resources..." 
-              className="w-72 pl-10"
+              placeholder="Search internships..." 
+              className="nav-search-input"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Search className="nav-search-icon" />
           </div>
-          <Button type="submit" variant="outline" size="icon">
+          <Button type="submit" variant="outline" size="icon" className="search-action-btn">
             <Filter className="h-4 w-4" />
           </Button>
         </form>
       </div>
 
       {/* Right Side Navigation */}
-      <div className="flex items-center space-x-4 justify-center">
+      <div className="app-nav-right">
 
         {/* Profile Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Avatar className="cursor-pointer">
+            <button className="profile-trigger">
+              <div className="profile-meta">
+                <span>{username}</span>
+                <small className="capitalize">{role}</small>
+              </div>
+              <Avatar className="cursor-pointer">
               <AvatarImage src="/api/placeholder/40/40" alt="User profile" />
               <AvatarFallback>
                 <User className="h-5 w-5" />
               </AvatarFallback>
             </Avatar>
+            </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-64 z-[1000]">
+          <DropdownMenuContent className="w-64 z-[1000] nav-dropdown">
             <DropdownMenuLabel>
               <div className="flex items-center">
                 <Avatar className="mr-3 h-10 w-10">
@@ -325,6 +335,7 @@ const Navbar = () => {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
       </div>
     </nav>
   );

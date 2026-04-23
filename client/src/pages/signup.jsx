@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { GraduationCap, MoveRight, Sparkles, UserPlus, Users } from 'lucide-react';
 import axios from "axios";
 import { getApiUrl } from '../config/api';
+import './signup.css';
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -44,84 +46,134 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl">Sign Up</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="grid gap-4">
-            <div className="grid gap-2">
-              <Label>Registration ID</Label>
+    <div className="signup-shell">
+      <div className="signup-noise" aria-hidden="true" />
+
+      <section className="signup-panel reveal delay-1">
+        <Link to="/" className="signup-brand">
+          <span className="brand-mark" />
+          <span>IMPing</span>
+        </Link>
+
+        <div className="panel-head">
+          <p className="panel-kicker">
+            <Sparkles size={16} />
+            Create Account
+          </p>
+          <h2>Start your internship journey with a better system.</h2>
+          <p>Register with your academic details and move from discovery to applications faster.</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="signup-form">
+          <div className="field-group">
+            <Label htmlFor="regId">Registration ID</Label>
+            <Input
+              id="regId"
+              type="text"
+              name="regId"
+              placeholder="eg. C2K230000"
+              value={formData.regId}
+              onChange={handleChange}
+              required
+              className="signup-input"
+            />
+          </div>
+
+          <div className="field-group two-col">
+            <div>
+              <Label htmlFor="name">Full Name</Label>
               <Input
-                type="text"
-                name="regId"
-                placeholder="eg. C2K230000"
-                value={formData.regId}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label>Name</Label>
-              <Input
+                id="name"
                 type="text"
                 name="name"
                 placeholder="Name Surname"
                 value={formData.name}
                 onChange={handleChange}
                 required
+                className="signup-input"
               />
             </div>
-            <div className="grid gap-2">
-              <Label>Email</Label>
+            <div>
+              <Label htmlFor="email">Email</Label>
               <Input
+                id="email"
                 type="email"
                 name="email"
-                placeholder="Email"
+                placeholder="name@example.com"
                 value={formData.email}
                 onChange={handleChange}
                 required
+                className="signup-input"
               />
             </div>
-            <div className="grid gap-2">
-              <Label>Password</Label>
+          </div>
+
+          <div className="field-group two-col">
+            <div>
+              <Label htmlFor="password">Password</Label>
               <Input
+                id="password"
                 type="password"
                 name="password"
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleChange}
                 required
+                className="signup-input"
               />
             </div>
-            <div className="grid gap-2">
-              <Label>Confirm Password</Label>
+            <div>
+              <Label htmlFor="password2">Confirm Password</Label>
               <Input
+                id="password2"
                 type="password"
                 name="password2"
-                placeholder="Re-enter your password"
+                placeholder="Re-enter password"
                 value={formData.password2}
                 onChange={handleChange}
                 required
+                className="signup-input"
               />
             </div>
-            <div className='h-5'>
-                {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing Up..." : "Sign Up"}
-            </Button>
-          </form>
-          <div className="mt-4 text-center">
-            <p className="text-sm">Already have an account?
-                <Button variant="link" size="sm" onClick={() => navigate("/register/login")}>
-                    Login
-                </Button>
-            </p>
           </div>
-        </CardContent>
-      </Card>
+
+          <div className="error-slot">
+            {error && <p className="form-error">{error}</p>}
+          </div>
+
+          <Button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? "Signing Up..." : "Create Account"}
+            {!loading && <MoveRight size={16} />}
+          </Button>
+        </form>
+
+        <div className="panel-footer">
+          <p>
+            Already have an account? <button type="button" onClick={() => navigate("/register/login")}>Login</button>
+          </p>
+          <Link to="/">Back to Home</Link>
+        </div>
+      </section>
+
+      <section className="signup-side reveal delay-2">
+        <h3>Built for both students and placement teams.</h3>
+        <p>IMPing creates one reliable workflow for campus opportunities, updates, and outcomes.</p>
+
+        <div className="side-points">
+          <article>
+            <UserPlus size={17} />
+            Fast onboarding for new students
+          </article>
+          <article>
+            <GraduationCap size={17} />
+            Internship-focused data capture
+          </article>
+          <article>
+            <Users size={17} />
+            Role-aware experience for admin and student users
+          </article>
+        </div>
+      </section>
     </div>
   );
 };

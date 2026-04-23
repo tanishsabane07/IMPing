@@ -37,6 +37,16 @@
   --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
   --sidebar-border: oklch(0.928 0.006 264.531);
   --sidebar-ring: oklch(0.707 0.022 261.325);
+  --ui-shell-padding: 6rem 0.9rem 1.4rem;
+  --ui-surface-radius-lg: 20px;
+  --ui-surface-radius-md: 16px;
+  --ui-surface-radius-sm: 12px;
+  --ui-surface-border: 1px solid rgba(29, 64, 102, 0.14);
+  --ui-surface-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.84), rgba(255, 246, 240, 0.82));
+  --ui-surface-shadow: 0 12px 32px rgba(16, 35, 63, 0.1);
+  --ui-card-border: 1px solid rgba(31, 66, 103, 0.15);
+  --ui-card-bg: rgba(255, 255, 255, 0.9);
+  --ui-card-shadow: 0 12px 30px rgba(16, 35, 63, 0.08);
 }
 
 .dark {

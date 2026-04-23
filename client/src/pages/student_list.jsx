@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { getApiUrl } from '@/config/api';
+import { ArrowLeft, Sparkles, UsersRound } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import {
   Table,
   TableHeader,
@@ -21,8 +23,10 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import './student_list.css';
 
 const StudentsPage = () => {
+  const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
@@ -64,44 +68,73 @@ const StudentsPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600 text-lg">Loading students...</p>
+      <div className="students-shell students-loading">
+        <div className="students-loader" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white p-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">All Students</h1>
+    <div className="students-shell">
+      <div className="students-noise" aria-hidden="true" />
+      <div className="students-container">
+      <div className="students-topbar reveal delay-1">
+        <Button variant="ghost" className="students-back-btn" onClick={() => navigate(-1)}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back
+        </Button>
+      </div>
+
+      <div className="students-head reveal delay-1">
+        <div>
+          <p className="students-kicker">
+            <Sparkles size={15} />
+            Admin Panel
+          </p>
+          <h1>All Students</h1>
+          <p>Manage student accounts and keep your internship management workspace tidy.</p>
+        </div>
+        <article className="students-stat">
+          <UsersRound size={16} />
+          <span>{students.length}</span>
+          <small>Registered students</small>
+        </article>
+      </div>
+
       {students.length === 0 ? (
-        <p className="text-gray-500">No students found.</p>
+        <div className="students-empty reveal delay-2">
+          <p>No students found.</p>
+        </div>
       ) : (
-        <div className="rounded-lg border shadow overflow-x-auto">
+        <div className="students-table-wrap reveal delay-2">
           <Table className="min-w-full border-collapse">
             <TableHeader>
               <TableRow>
-                <TableHead className="border px-4 py-2 text-left">#</TableHead>
-                <TableHead className="border px-4 py-2 text-left">RegID</TableHead>
-                <TableHead className="border px-4 py-2 text-left">Name</TableHead>
-                <TableHead className="border px-4 py-2 text-left">Email</TableHead>
-                <TableHead className="border px-4 py-2 text-left">Role</TableHead>
-                <TableHead className="border px-4 py-2 text-left">Action</TableHead>
+                <TableHead className="students-th">#</TableHead>
+                <TableHead className="students-th">RegID</TableHead>
+                <TableHead className="students-th">Name</TableHead>
+                <TableHead className="students-th">Email</TableHead>
+                <TableHead className="students-th">Role</TableHead>
+                <TableHead className="students-th">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {students.map((student, index) => (
-                <TableRow key={student._id || index} className="hover:bg-gray-50">
-                  <TableCell className="border px-4 py-2">{index + 1}</TableCell>
-                  <TableCell className="border px-4 py-2">{student.regId}</TableCell>
-                  <TableCell className="border px-4 py-2">{student.name}</TableCell>
-                  <TableCell className="border px-4 py-2">{student.email}</TableCell>
-                  <TableCell className="border px-4 py-2">{student.role}</TableCell>
-                  <TableCell className="border px-4 py-2">
+                <TableRow key={student._id || index} className="students-row">
+                  <TableCell className="students-td">{index + 1}</TableCell>
+                  <TableCell className="students-td">{student.regId}</TableCell>
+                  <TableCell className="students-td">{student.name}</TableCell>
+                  <TableCell className="students-td">{student.email}</TableCell>
+                  <TableCell className="students-td students-role-cell">
+                    <span className="students-role-pill">{student.role}</span>
+                  </TableCell>
+                  <TableCell className="students-td">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
                           variant="destructive"
                           size="sm"
+                          className="students-delete-btn"
                           onClick={() => setSelectedStudentId(student._id)}
                         >
                           Delete
@@ -127,6 +160,7 @@ const StudentsPage = () => {
           </Table>
         </div>
       )}
+      </div>
     </div>
   );
 };

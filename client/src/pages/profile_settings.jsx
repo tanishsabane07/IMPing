@@ -7,9 +7,12 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Mail, ShieldCheck, Sparkles, UserRound } from "lucide-react";
+import './profile_settings.css';
 
 const Profile = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,18 +21,23 @@ const Profile = () => {
     const fetchUserData = async () => {
       const token = localStorage.getItem("authToken");
       if (!token) {
-        setError("Unauthorized: Please log in");
-        setLoading(false);
+        navigate("/register/login");
         return;
       }
 
       try {
+        setLoading(true);
+        setError(null);
         const response = await axios.get(getApiUrl("/profile"), {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(response.data);
-        setError(null);
       } catch (err) {
+        if (err.response?.status === 401) {
+          localStorage.removeItem("authToken");
+          navigate("/register/login");
+          return;
+        }
         setError("Failed to load user profile. Please try again later.");
         console.error(err);
       } finally {
@@ -38,18 +46,31 @@ const Profile = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, [navigate]);
 
   return (
-    <div className="max-w-2xl mx-auto mt-12">
-      <Card className="shadow-lg">
-        <CardHeader className="text-center">
-          <Avatar className="h-24 w-24 mx-auto">
+    <div className="profile-shell">
+      <div className="profile-noise" aria-hidden="true" />
+      <div className="profile-container">
+        <div className="profile-topbar reveal delay-1">
+          <Button variant="ghost" className="profile-back-btn" onClick={() => navigate(-1)}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
+        </div>
+
+        <Card className="profile-card reveal delay-2">
+        <CardHeader className="text-center profile-header">
+          <p className="profile-kicker">
+            <Sparkles size={15} />
+            Account Profile
+          </p>
+          <Avatar className="h-24 w-24 mx-auto profile-avatar">
             <AvatarImage src={user?.avatar || "/placeholder.png"} />
             <AvatarFallback>{user?.name?.charAt(0) || "U"}</AvatarFallback>
           </Avatar>
-          <CardTitle className="text-xl mt-3">{user?.name || "User"}</CardTitle>
-          <p className="text-sm text-gray-500">{user?.role}</p>
+          <CardTitle className="text-xl mt-3 profile-name">{user?.name || "User"}</CardTitle>
+          <p className="profile-role">{user?.role}</p>
         </CardHeader>
 
         <CardContent className="space-y-4">
@@ -68,21 +89,21 @@ const Profile = () => {
           )}
 
           {!loading && user && (
-            <div className="text-gray-700 space-y-3">
-              <div className="flex justify-between border-b pb-2">
-                <span className="font-medium">Registration ID:</span>
+            <div className="profile-fields">
+              <div className="profile-row">
+                <span className="profile-label"><UserRound size={14} /> Registration ID</span>
                 <span>{user.regId}</span>
               </div>
-              <div className="flex justify-between border-b pb-2">
-                <span className="font-medium">Name:</span>
+              <div className="profile-row">
+                <span className="profile-label"><UserRound size={14} /> Name</span>
                 <span>{user.name}</span>
               </div>
-              <div className="flex justify-between border-b pb-2">
-                <span className="font-medium">Department:</span>
+              <div className="profile-row">
+                <span className="profile-label"><ShieldCheck size={14} /> Department</span>
                 <span>{user.dept}</span>
               </div>
-              <div className="flex justify-between border-b pb-2">
-                <span className="font-medium">Email:</span>
+              <div className="profile-row">
+                <span className="profile-label"><Mail size={14} /> Email</span>
                 <span>{user.email}</span>
               </div>
 
@@ -91,11 +112,12 @@ const Profile = () => {
 
           {!loading && !error && (
             <div className="text-center mt-4">
-              <Button onClick={() => {Navigate("/profile/settings")}}>Edit Profile</Button>
+              <Button onClick={() => navigate("/internships")} className="profile-action-btn">Go to Dashboard</Button>
             </div>
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

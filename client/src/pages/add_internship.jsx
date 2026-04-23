@@ -10,8 +10,20 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getApiUrl } from '../config/api';
 import {
+  ArrowLeft,
+  BriefcaseBusiness,
+  CalendarClock,
+  Image as ImageIcon,
+  Sparkles,
+  MapPin,
+  Landmark,
+  ShieldCheck,
+  Timer,
+  Wallet,
+}
+from "lucide-react";
+import {
   AlertDialog,
-  AlertDialogTrigger,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -19,6 +31,7 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
+import './add_internship.css';
 
 export default function AddInternship() {
   const form = useForm({
@@ -97,19 +110,43 @@ export default function AddInternship() {
   };
 
   return (
-    <div className="p-4 m-auto max-w-3xl mt-12">
-        <h1 className="text-2xl font-bold mb-4">Add Internship</h1>
+    <div className="add-shell">
+      <div className="add-noise" aria-hidden="true" />
+      <div className="add-container">
+      <div className="add-topbar reveal delay-1">
+        <Button variant="ghost" className="add-back-btn" onClick={() => navigate(-1)}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back
+        </Button>
+      </div>
+
+      <div className="add-head reveal delay-1">
+        <div>
+          <p className="add-kicker">
+            <Sparkles size={15} />
+            Admin Studio
+          </p>
+          <h1>Create a new internship listing</h1>
+          <p>Publish role details with deadline, stipend, eligibility, and brand assets in one flow.</p>
+        </div>
+        <div className="add-head-points">
+          <article><ShieldCheck size={16} /> Role-ready publishing</article>
+          <article><BriefcaseBusiness size={16} /> Student-first listing format</article>
+        </div>
+      </div>
+
+      <div className="add-card reveal delay-2">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="add-form">
           {/* Company Name */}
           <FormField
             control={form.control}
             name="company"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Company Name</FormLabel>
+                <FormLabel className="add-label"><Landmark size={14} /> Company Name</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Enter company name" />
+                  <Input {...field} placeholder="Enter company name" className="add-input" />
                 </FormControl>
               </FormItem>
             )}
@@ -121,22 +158,22 @@ export default function AddInternship() {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel className="add-label"><BriefcaseBusiness size={14} /> Description</FormLabel>
                 <FormControl>
-                  <Textarea {...field} placeholder="Enter internship description" />
+                  <Textarea {...field} placeholder="Enter internship description" className="add-input add-textarea" />
                 </FormControl>
               </FormItem>
             )}
           />
 
           {/* Remote Checkbox */}
-          <FormItem className="flex items-center space-x-2">
-            <FormLabel>Location</FormLabel>
+          <FormItem className="add-location-toggle">
+            <FormLabel className="add-label"><MapPin size={14} /> Location</FormLabel>
             <Checkbox
               checked={isRemote}
               onCheckedChange={(checked) => setIsRemote(checked)}
             />
-            <FormLabel>Remote</FormLabel>
+            <FormLabel className="add-inline-label">Remote</FormLabel>
           </FormItem>
 
           {/* Location Input (Only If On-Site) */}
@@ -146,84 +183,90 @@ export default function AddInternship() {
               name="location"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>On-Site Location</FormLabel>
+                  <FormLabel className="add-label">On-Site Location</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Enter location" />
+                    <Input {...field} placeholder="Enter location" className="add-input" />
                   </FormControl>
                 </FormItem>
               )}
             />
           )}
 
-          {/* Eligibility */}
-          <FormField
-            control={form.control}
-            name="eligibility"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Skills Required</FormLabel>
-                <FormControl>
-                  <Textarea {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          <div className="add-grid-2">
+            {/* Eligibility */}
+            <FormField
+              control={form.control}
+              name="eligibility"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="add-label"><ShieldCheck size={14} /> Skills Required</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} className="add-input add-textarea" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
 
-          {/* Duration */}
-          <FormField
-            control={form.control}
-            name="duration"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Duration</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="E.g., 3 months" />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+            <div className="add-grid-2-inner">
+              {/* Duration */}
+              <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="add-label"><Timer size={14} /> Duration</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="E.g., 3 months" className="add-input" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
-          {/* Stipend */}
-          <FormField
-            control={form.control}
-            name="stipend"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Stipend</FormLabel>
-                <FormControl>
-                  <Input {...field} type="number" placeholder="Enter stipend amount" />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+              {/* Stipend */}
+              <FormField
+                control={form.control}
+                name="stipend"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="add-label"><Wallet size={14} /> Stipend</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="number" placeholder="Enter stipend amount" className="add-input" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
-          {/* Deadline */}
-          <FormField
-            control={form.control}
-            name="deadline"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Application Deadline</FormLabel>
-                <FormControl>
-                  <Input {...field} type="date" placeholder="dd/mm/yyyy" />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+              {/* Deadline */}
+              <FormField
+                control={form.control}
+                name="deadline"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="add-label"><CalendarClock size={14} /> Application Deadline</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="date" placeholder="dd/mm/yyyy" className="add-input" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
 
           {/* Image Upload */}
           <FormItem>
-            <FormLabel>Upload Image</FormLabel>
+            <FormLabel className="add-label"><ImageIcon size={14} /> Upload Company Image</FormLabel>
             <FormControl>
               <Input
                 type="file"
                 accept="image/*"
                 onChange={(e) => setSelectedImage(e.target.files[0])}
+                className="add-input"
               />
             </FormControl>
+            {selectedImage && <p className="add-file-name">Selected: {selectedImage.name}</p>}
           </FormItem>
 
-          <Button type="submit">Submit</Button>
+          <Button type="submit" className="add-submit-btn">Publish Internship</Button>
 
           {/* Alert Dialog */}
           <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
@@ -245,6 +288,8 @@ export default function AddInternship() {
           </AlertDialog>
         </form>
       </Form>
+      </div>
+      </div>
     </div>
   );
 }

@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import './internship_details.css';
 
 const InternshipDetails = () => {
   const { id } = useParams();
@@ -201,28 +202,32 @@ const InternshipDetails = () => {
   };
 
   if (loading) return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-blue-500"></div>
+    <div className="details-shell details-loading">
+      <div className="details-loader" />
     </div>
   );
 
   if (error) return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
-      <h1 className="text-4xl font-bold text-red-500 mb-4">Oops!</h1>
-      <p className="text-xl text-gray-600 mb-6">{error}</p>
-      <Button onClick={() => navigate(-1)}>Go Back</Button>
+    <div className="details-shell details-error-wrap">
+      <div className="details-error-card">
+        <h1>Oops!</h1>
+        <p>{error}</p>
+        <Button onClick={() => navigate(-1)}>Go Back</Button>
+      </div>
     </div>
   );
 
   if (!internship) return null;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="details-shell">
+      <div className="details-noise" aria-hidden="true" />
+      <div className="details-container">
       {/* Top navigation */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="details-topbar reveal delay-1">
         <Button 
           variant="ghost" 
-          className="flex items-center text-primary hover:bg-primary/10"
+          className="details-back-btn"
           onClick={() => navigate(-1)}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -233,7 +238,7 @@ const InternshipDetails = () => {
             variant="outline" 
             size="sm" 
             onClick={handleSave}
-            className="flex items-center"
+            className="details-save-btn"
           >
             <Bookmark className="h-4 w-4 mr-2" />
             Save
@@ -242,20 +247,20 @@ const InternshipDetails = () => {
       </div>
 
       {/* Company and position header */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="details-hero reveal delay-2">
         {internship.image && (
           <img
             src={internship.image || "/default-company.png"}
             alt="Company Logo"
-            className="w-20 h-20 object-contain rounded-lg"
+            className="details-company-logo"
           />
         )}
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold">{internship.company}</h1>
-          <p className="text-lg text-muted-foreground">{internship.title}</p>
+        <div className="details-hero-copy">
+          <h1>{internship.company}</h1>
+          <p>{internship.title || 'Internship Opportunity'}</p>
         </div>
         {role === 'student' && isApplied && (
-          <Badge className="bg-lime-500 hover:bg-lime-500/80">
+          <Badge className="details-status-pill">
             {status}
           </Badge>
         )}
@@ -264,37 +269,37 @@ const InternshipDetails = () => {
       <Separator className="my-6" />
 
       {/* Key details section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <div className="flex items-center">
+      <div className="details-meta-grid reveal delay-2">
+        <div className="details-meta-item">
           <MapPin className="h-5 w-5 text-primary mr-3" />
           <div>
-            <p className="text-muted-foreground text-sm">Location</p>
+            <p className="details-meta-label">Location</p>
             <p className="font-medium">{internship.location}</p>
           </div>
         </div>
         
-        <div className="flex items-center">
+        <div className="details-meta-item">
           <Clock className="h-5 w-5 text-primary mr-3" />
           <div>
-            <p className="text-muted-foreground text-sm">Duration</p>
+            <p className="details-meta-label">Duration</p>
             <p className="font-medium">{internship.duration}</p>
           </div>
         </div>
         
-        <div className="flex items-center">
+        <div className="details-meta-item">
           <DollarSign className="h-5 w-5 text-primary mr-3" />
           <div>
-            <p className="text-muted-foreground text-sm">Stipend</p>
+            <p className="details-meta-label">Stipend</p>
             <p className="font-medium">
               {internship.stipend ? `₹${internship.stipend}` : "Unpaid"}
             </p>
           </div>
         </div>
         
-        <div className="flex items-center">
+        <div className="details-meta-item">
           <Calendar className="h-5 w-5 text-primary mr-3" />
           <div>
-            <p className="text-muted-foreground text-sm">Deadline</p>
+            <p className="details-meta-label">Deadline</p>
             <p className="font-medium">
               {new Date(internship.deadline).toLocaleDateString("en-US", {
                 year: "numeric",
@@ -309,18 +314,18 @@ const InternshipDetails = () => {
       <Separator className="my-6" />
 
       {/* Description section */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">About the Internship</h2>
-        <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+      <div className="details-section reveal delay-2">
+        <h2>About the Internship</h2>
+        <p className="details-section-copy">
           {internship.description}
         </p>
       </div>
 
       <Separator className="my-6" />
 
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Eligibility</h2>
-        <p className="text-accent-foreground leading-relaxed whitespace-pre-line">
+      <div className="details-section reveal delay-2">
+        <h2>Eligibility</h2>
+        <p className="details-section-copy">
           {internship.eligibility}
         </p>
       </div>
@@ -331,13 +336,13 @@ const InternshipDetails = () => {
       {role === 'student' && (
         <div className="mb-8">
           {isApplied ? (
-            <Button className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-500/90">
+            <Button className="w-full h-12 text-lg details-applied-btn">
               <ClipboardCheck className="mr-2 h-5 w-5" />
               Applied ({status})
             </Button>
           ) : showForm ? (
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Application Form</h3>
+            <Card className="p-6 details-apply-card">
+              <h3 className="details-form-title">Application Form</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
@@ -383,18 +388,18 @@ const InternshipDetails = () => {
                   <Label>Resume Upload (PDF only)</Label>
                   <div
                     {...getRootProps()}
-                    className={`border-2 rounded-md px-4 py-10 text-center cursor-pointer mt-1 ${
-                      isDragActive ? 'border-blue-500 bg-blue-50' : 'border-dashed border-gray-300'
+                    className={`details-dropzone ${
+                      isDragActive ? 'details-dropzone-active' : ''
                     }`}
                   >
                     <input {...getInputProps()} />
                     {resume ? (
-                      <div className="text-green-700 font-medium">
+                      <div className="details-dropzone-success">
                         <CheckCircle className="inline-block w-5 h-5 mr-2" />
                         {resume.name}
                       </div>
                     ) : (
-                      <p className="text-gray-600">
+                      <p className="details-dropzone-placeholder">
                         Drag & drop your resume here, or click to browse
                       </p>
                     )}
@@ -421,7 +426,7 @@ const InternshipDetails = () => {
           ) : (
             <Button
               onClick={() => setShowForm(true)}
-              className="w-full h-12 text-lg"
+              className="w-full h-12 text-lg details-apply-btn"
             >
               Apply Now
             </Button>
@@ -432,16 +437,16 @@ const InternshipDetails = () => {
       {/* Admin View - Applications Management */}
       {role === 'admin' && (
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold flex items-center">
+          <div className="details-admin-head">
+            <h2 className="details-admin-title">
               <Users className="h-5 w-5 mr-2" />
               Applications ({applications.length})
             </h2>
-            <div className="flex gap-2">
+            <div className="details-admin-actions">
               <select
                 value={bulkStatus}
                 onChange={(e) => setBulkStatus(e.target.value)}
-                className="border rounded px-3 py-1 text-sm"
+                className="details-status-select"
               >
                 <option value="">Select Status</option>
                 <option value="Selected">Selected</option>
@@ -468,7 +473,7 @@ const InternshipDetails = () => {
           </div>
 
           {applications.length > 0 ? (
-            <Card>
+            <Card className="details-admin-card">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -499,7 +504,7 @@ const InternshipDetails = () => {
                           href={app.resume} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline"
+                          className="details-resume-link"
                         >
                           View
                         </a>
@@ -508,9 +513,9 @@ const InternshipDetails = () => {
                         <Badge
                           variant="outline"
                           className={
-                            app.status === 'Selected' ? 'bg-green-100 text-green-800' :
-                            app.status === 'Rejected' ? 'bg-red-100 text-red-800' :
-                            'bg-yellow-100 text-yellow-800'
+                            app.status === 'Selected' ? 'details-pill-selected' :
+                            app.status === 'Rejected' ? 'details-pill-rejected' :
+                            'details-pill-pending'
                           }
                         >
                           {app.status || 'Pending'}
@@ -546,12 +551,13 @@ const InternshipDetails = () => {
               </Table>
             </Card>
           ) : (
-            <Card className="p-8 text-center">
+            <Card className="p-8 text-center details-admin-card">
               <p className="text-muted-foreground">No applications received yet</p>
             </Card>
           )}
         </div>
       )}
+      </div>
     </div>
   );
 };

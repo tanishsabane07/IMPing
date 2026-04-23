@@ -94,16 +94,16 @@ const InternshipCard = ({ _id, company, stipend, deadline, image, location, dura
 
   return (
     <>
-      <Card className="w-full max-w-[450px] shadow-lg hover:shadow-xl transition-shadow duration-300 z-10 h-[350px] flex flex-col justify-between relative">
+      <Card className="w-full max-w-[450px] border border-slate-200/80 bg-white/90 backdrop-blur-sm shadow-md hover:-translate-y-1 hover:shadow-xl transition-all duration-300 z-10 h-[350px] flex flex-col justify-between relative rounded-2xl overflow-hidden">
         <CardHeader className="pb-2 flex justify-between items-start">
           <div className="flex items-center space-x-4">
             <img
               src={image || '/google_logo.png'}
               alt={`${company} Logo`}
-              className="w-20 h-20 object-contain rounded-lg"
+              className="w-20 h-20 object-contain rounded-xl border border-slate-200 bg-white"
             />
             <div>
-              <CardTitle className="text-xl font-bold">{company}</CardTitle>
+              <CardTitle className="text-xl font-bold text-slate-800">{company}</CardTitle>
             </div>
           </div>
 
@@ -126,10 +126,10 @@ const InternshipCard = ({ _id, company, stipend, deadline, image, location, dura
         <CardContent className="pt-4 space-y-2">
           <div className="flex space-x-2">
           {/* <p className="text-sm text-muted-foreground">Software Engineering Intern 2025</p> */}
-            <Badge variant="secondary">{location || 'Remote'}</Badge>
-            <Badge variant="outline">{duration || 'N/A'}</Badge>
+            <Badge variant="secondary" className="bg-orange-100 text-orange-900 hover:bg-orange-100">{location || 'Remote'}</Badge>
+            <Badge variant="outline" className="border-slate-300">{duration || 'N/A'}</Badge>
           </div>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-slate-600">
             <p>Stipend: {stipend ? `₹${stipend}` : 'Unpaid'}</p>
             <p>Deadline: {deadline ? new Date(deadline).toLocaleDateString() : 'N/A'}</p>
             <p>Duration: {duration || 'Not specified'}</p>
@@ -137,7 +137,7 @@ const InternshipCard = ({ _id, company, stipend, deadline, image, location, dura
         </CardContent>
 
         <CardFooter className="flex justify-center">
-          <Button className="w-full" onClick={() => navigate(`/internships/internship/${_id}`)}>
+          <Button className="w-full bg-slate-800 hover:bg-slate-900" onClick={() => navigate(`/internships/internship/${_id}`)}>
             View Details
           </Button>
         </CardFooter>

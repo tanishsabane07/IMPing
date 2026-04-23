@@ -4,7 +4,6 @@ import Dashboard from './pages/dashboard'
 import AddInternship from './pages/add_internship'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import SignupPage from './pages/signup'
-import { Navigate } from 'react-router-dom'
 import InternshipDetails from './pages/internship_details'
 import Layout from './layouts/layout'
 import EditInternship from './pages/edit_internship'
@@ -13,6 +12,8 @@ import ApplyInternship from './pages/upload_details'
 import DuedInternships from './pages/dued_internships'
 import StudentsPage from './pages/student_list'
 import StudentApplications from './pages/student_applications'
+import LandingPage from './pages/landing'
+import SearchResults from './pages/search_results'
 
 function App() {
 
@@ -30,7 +31,7 @@ function App() {
 
         <Route path="/admin/add-internship" element={<AddInternship />} />
 
-        <Route path="/" element={<Navigate to="/register/login" />} />
+        <Route path="/" element={<LandingPage />} />
 
         <Route path="/internships/internship/:id" element={<InternshipDetails />} />
 
@@ -45,6 +46,8 @@ function App() {
         <Route path="/admin/students" element={<StudentsPage />} />
 
         <Route path="/student/my-applications" element={<StudentApplications />} />
+
+        <Route path="/search" element={<SearchResults />} />
 
         </Routes>
       </Layout>

@@ -2,7 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import InternshipCard from '@/components/ui/internship_card';
 import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, CalendarX2, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { getApiUrl } from '../config/api';
+import './dued_internships.css';
 
 const DuedInternships = () => {
   const [internships, setInternships] = useState([]);
@@ -47,40 +50,54 @@ const DuedInternships = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen w-full bg-white">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-          <p className="text-gray-600 text-lg font-medium">Loading Internships...</p>
-        </div>
+      <div className="dued-shell dued-loading">
+        <div className="dued-loader" />
+        <p>Loading internships...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen w-full bg-white overflow-hidden">
-        <div className="mt-24 px-4 z-[1] min-h-[calc(100vh-6rem)] w-full flex flex-col">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Dued Internships</h1>
+    <div className="dued-shell">
+      <div className="dued-noise" aria-hidden="true" />
+      <div className="dued-container">
+        <div className="dued-topbar reveal delay-1">
+          <Button variant="ghost" className="dued-back-btn" onClick={() => navigate(-1)}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
+        </div>
 
-            {internships.length === 0 ? (
-            <div className="flex-1 flex items-center justify-center text-gray-600 overflow-hidden">
-                <div className="text-center">
-                <p className="text-2xl font-semibold">No internships available.</p>
-                <p className="text-md text-gray-400 mt-2">
-                    Check back later for new opportunities!
-                </p>
-                </div>
+        <div className="dued-head reveal delay-1">
+          <div>
+            <p className="dued-kicker">
+              <Sparkles size={15} />
+              Admin Tracking
+            </p>
+            <h1>Due Internships</h1>
+            <p>Review expired listings and clean up completed opportunities from the active board.</p>
+          </div>
+          <article className="dued-stat">
+            <CalendarX2 size={16} />
+            <span>{internships.length}</span>
+            <small>Expired listings</small>
+          </article>
+        </div>
+
+        {internships.length === 0 ? (
+            <div className="dued-empty reveal delay-2">
+              <p>No expired internships found.</p>
+              <span>All good for now. Check again later.</span>
             </div>
-            ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 flex-grow w-full">
+        ) : (
+            <div className="dued-grid reveal delay-2">
                 {internships.map((internship, index) => (
                 <InternshipCard key={index} {...internship} />
                 ))}
             </div>
-            )}
-        </div>
+        )}
+      </div>
     </div>
-
-
   );
 };
 
