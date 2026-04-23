@@ -45,6 +45,7 @@ const EditInternship = () => {
     stipend: "",
     deadline: "",
     image: "",
+    imageFile: null,
     location: "",
     eligibility: "",
     duration: "",
@@ -101,6 +102,7 @@ const EditInternship = () => {
           stipend: internship.stipend || "",
           deadline: formattedDate,
           image: internship.image || "",
+          imageFile: null,
           location: internship.location || "",
           eligibility: internship.eligibility || "",
           duration: internship.duration || "",
@@ -174,21 +176,31 @@ const EditInternship = () => {
     
     setSubmitting(true);
     
-    // Prepare data for submission
-    const submissionData = {
-      ...formData,
-      stipend: formData.stipend ? Number(formData.stipend) : undefined,
-    };
+    // Build multipart payload so optional image updates are supported.
+    const submissionData = new FormData();
+    submissionData.append("company", formData.company);
+    submissionData.append("description", formData.description || "");
+    submissionData.append("location", formData.location || "");
+    submissionData.append("eligibility", formData.eligibility || "");
+    submissionData.append("duration", formData.duration || "");
+    submissionData.append("deadline", formData.deadline || "");
+
+    if (formData.stipend !== "") {
+      submissionData.append("stipend", Number(formData.stipend));
+    }
+
+    // Preserve existing image when no new file is uploaded.
+    if (formData.image && !formData.imageFile) {
+      submissionData.append("image", formData.image);
+    }
 
     if (formData.imageFile) {
-      // If a file is uploaded, send the file
-      formData.append("image", formData.imageFile);
+      submissionData.append("image", formData.imageFile);
     }
     
     try {
       await axios.put(getApiUrl(`/admin/update-internship/${id}`), submissionData, {
         headers: {
-          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("authToken")}`
         }
       });
