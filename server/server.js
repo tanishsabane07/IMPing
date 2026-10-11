@@ -1,74 +1,75 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
+
 const connectDB = require("./config/db");
 const auth = require("./middlewares/auth");
-const {adminRouter, loginRouter, studentRouter, internshipRouter, profileRouter, applicationRouter } = require("./routes/export_routes");
-require("dotenv").config();
+const {
+  adminRouter,
+  loginRouter,
+  studentRouter,
+  internshipRouter,
+  profileRouter,
+  applicationRouter,
+} = require("./routes/export_routes");
+
+// ─── App Setup ───────────────────────────────────────────────────────────────
 
 const app = express();
 app.use(express.json());
 
-// CORS configuration
+// ─── CORS ────────────────────────────────────────────────────────────────────
+
+// Origins always allowed (local dev + production from .env)
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-  ...(process.env.FRONTEND_URLS
-    ? process.env.FRONTEND_URLS.split(",").map((origin) => origin.trim()).filter(Boolean)
-    : []),
-  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL.trim()] : []),
-];
+  process.env.FRONTEND_URL, // e.g. https://im-ping.vercel.app
+].filter(Boolean); // removes undefined if FRONTEND_URL is not set
 
-const isAllowedOrigin = (origin) => {
-  if (!origin) return true;
 
-  // Allow this Vercel project domains (production + preview URLs)
-  if (/^https:\/\/im-ping(?:-[a-z0-9-]+)?\.vercel\.app$/i.test(origin)) {
-    return true;
-  }
-
+// Returns true if the request origin is allowed
+function isAllowedOrigin(origin) {
+  if (!origin) return true; // Allow non-browser requests (e.g. Postman, curl)
   return allowedOrigins.includes(origin);
-};
+}
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (isAllowedOrigin(origin)) {
-        return callback(null, true);
-      }
+      if (isAllowedOrigin(origin)) return callback(null, true);
       return callback(new Error("Not allowed by CORS"));
     },
-    credentials: true,
+    credentials: true, // Required for cookies / auth headers
   })
 );
 
+// ─── Static Files ────────────────────────────────────────────────────────────
+
 app.use("/uploads", express.static("uploads"));
 
+// ─── Database ────────────────────────────────────────────────────────────────
 
-connectDB();    //connect to the database
- 
+connectDB();
 
-app.use("/register", loginRouter);
+// ─── Routes ──────────────────────────────────────────────────────────────────
 
-app.use(auth);  // authentication middleware
+app.use("/register", loginRouter);   // Public: login / register
+
+app.use(auth);                       // All routes below require authentication
 
 app.use("/admin", adminRouter);
 app.use("/student", studentRouter);
 app.use("/internships", internshipRouter);
-app.use("/profile", profileRouter);  // profile router
-app.use("/applications", applicationRouter); // application router
+app.use("/profile", profileRouter);
+app.use("/applications", applicationRouter);
 
-// Serve React build files in production
-// Serve React build files in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/dist')));
 
-  app.get(/.*/, (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-  });
-}
+
+// ─── Start Server ────────────────────────────────────────────────────────────
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {    //server listening
-    console.log(`Server is running on port ${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
